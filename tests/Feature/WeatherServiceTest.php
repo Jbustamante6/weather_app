@@ -86,4 +86,38 @@ class WeatherServiceTest extends TestCase
         $response->assertStatus(500); // Error interno del servidor
         $response->assertJson(['error' => 'API Error']);
     }
+
+    /**
+     * Test para verificar que se puede listar las ciudades con éxito.
+     */
+    public function test_listar_ciudades_exitosamente()
+    {
+        // Hacer la solicitud al endpoint
+        $response = $this->getJson('/api/ciudades');
+
+        // Verificar la respuesta
+        $response->assertStatus(200)
+                 ->assertJsonStructure([
+                     'current_page',
+                     'data',
+                     'total',
+                     'per_page',
+                     'last_page',
+                     'from',
+                     'to'
+                 ]);
+    }
+
+    /**
+     * Test para verificar el filtrado por nombre de ciudad.
+     */
+    public function test_filtrado_por_nombre_de_ciudad()
+    {
+        // Hacer la solicitud al endpoint con filtro por nombre
+        $response = $this->getJson('/api/ciudades?q=bog');
+
+        // Verificar la respuesta
+        $response->assertStatus(200)
+                 ->assertJsonFragment(['name' => 'Bogotá']);
+    }
 }
