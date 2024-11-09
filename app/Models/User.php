@@ -48,6 +48,16 @@ class User extends Authenticatable implements JWTSubject
         ];
     }
 
+     /**
+     * Relación con el modelo CiudadFavorita.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function favorites()
+    {
+        return $this->hasMany(Favorites::class, 'user_id');
+    }
+
     // Métodos requeridos por JWTSubject
     public function getJWTIdentifier()
     {
