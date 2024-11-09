@@ -18,4 +18,5 @@ Route::post('users/register', [UserController::class, 'register']);
 Route::post('users/login', [UserController::class, 'login']);
 Route::post('users/logout', [UserController::class, 'logout'])->middleware('auth:api');
 Route::post('/ciudades/favoritas', [FavoritesController::class, 'agregarFavorito'])->middleware('auth:api');
+Route::get('/ciudades/favoritas', [FavoritesController::class, 'listarFavoritos'])->middleware('auth:api');
 

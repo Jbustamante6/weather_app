@@ -9,7 +9,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class FavoritesControllerTest extends TestCase
 {
-    //use RefreshDatabase;
+    use RefreshDatabase;
 
     /**
      * Test para verificar que un usuario autenticado puede agregar una ciudad a favoritos.
@@ -78,6 +78,54 @@ class FavoritesControllerTest extends TestCase
 
         // Hacer la solicitud sin autenticación
         $response = $this->postJson('/api/ciudades/favoritas', $data);
+
+        // Verificar que la respuesta sea de no autenticado
+        $response->assertStatus(401);
+    }
+
+
+    /**
+     * Test para verificar que un usuario autenticado puede listar sus ciudades favoritas.
+     */
+    public function test_usuario_autenticado_puede_listar_favoritos()
+    {
+        // Crear un usuario
+        $user = User::factory()->create();
+
+        // Crear ciudades favoritas para el usuario
+        Favorite::factory()->count(3)->create([
+            'user_id' => $user->id,
+        ]);
+
+        // Hacer la solicitud autenticada como el usuario
+        $response = $this->actingAs($user, 'api')
+                         ->getJson('/api/ciudades/favoritas');
+
+        // Verificar la respuesta
+        $response->assertStatus(200)
+                 ->assertJsonStructure([
+                     'favorites' => [
+                         '*' => [
+                             'id',
+                             'user_id',
+                             'name',
+                             'created_at',
+                             'updated_at'
+                         ]
+                     ]
+                 ]);
+
+        // Verificar que la cantidad de ciudades favoritas es correcta
+        $this->assertCount(3, $response->json('favorites'));
+    }
+
+    /**
+     * Test para verificar que un usuario no autenticado no puede listar ciudades favoritas.
+     */
+    public function test_usuario_no_autenticado_no_puede_listar_favoritos()
+    {
+        // Hacer la solicitud sin autenticación
+        $response = $this->getJson('/api/ciudades/favoritas');
 
         // Verificar que la respuesta sea de no autenticado
         $response->assertStatus(401);

@@ -29,4 +29,17 @@ class FavoritesController extends Controller
             'ciudad' => $favorite
         ], 201);
     }
+
+    public function listarFavoritos()
+    {
+        // Obtener el usuario autenticado
+        $usuario = Auth::user();
+
+        // Obtener las ciudades favoritas del usuario
+        $favoritos = Favorite::where('user_id', $usuario->id)->get();
+
+        return response()->json([
+            'favorites' => $favoritos
+        ], 200);
+    }
 }

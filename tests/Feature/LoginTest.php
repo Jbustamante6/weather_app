@@ -8,7 +8,7 @@ use Tests\TestCase;
 
 class LoginTest extends TestCase
 {
-    //use RefreshDatabase;
+    use RefreshDatabase;
 
     /** @test */
     public function it_logs_in_a_user_with_valid_credentials()

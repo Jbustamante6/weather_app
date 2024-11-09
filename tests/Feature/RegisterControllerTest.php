@@ -10,7 +10,7 @@ use Tests\TestCase;
 
 class RegisterControllerTest extends TestCase
 {
-    //use RefreshDatabase;
+    use RefreshDatabase;
 
     /** @test */
     public function it_registers_a_user_with_valid_data()

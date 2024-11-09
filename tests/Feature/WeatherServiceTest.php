@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Http;
 
 class WeatherServiceTest extends TestCase
 {
+    use RefreshDatabase;
     /** @test */
     public function it_requires_query_parameter_with_min_length()
     {
