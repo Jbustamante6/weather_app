@@ -61,7 +61,7 @@ class SearchCityController extends Controller
 
             // Parámetro de filtro opcional
             $pais = 'CO';
-            $nombreCiudad = strtolower($request->input('q', ''));
+            $nombreCiudad = $request->input('q', '');
 
             // Filtrar las ciudades por país y nombre
             $ciudadesFiltradas = array_filter($data, function ($ciudad) use ($pais, $nombreCiudad) {
@@ -73,15 +73,15 @@ class SearchCityController extends Controller
             // Convertir el array filtrado a una lista indexada correctamente
             $ciudadesFiltradas = array_values($ciudadesFiltradas);
 
-            // Ordenar las ciudades en orden alfabético por nombre
-            usort($ciudadesFiltradas, function ($a, $b) {
-                return strcmp($a['name'], $b['name']);
-            });
-
             // Verificar si hay resultados filtrados
             if (count($ciudadesFiltradas) === 0) {
                 return response()->json(['message' => 'No se encontraron resultados'], 200);
             }
+
+            // Ordenar las ciudades en orden alfabético por nombre
+            usort($ciudadesFiltradas, function ($a, $b) {
+                return strcmp($a['name'], $b['name']);
+            });
 
             // Paginación
             $pagina = max((int)$request->input('page', 1), 1); // Asegura que la página sea al menos 1
@@ -112,7 +112,6 @@ class SearchCityController extends Controller
             return response()->json(['error' => 'Ocurrió un error al procesar la solicitud. Intente de nuevo más tarde.'], 500);
         }
     }
-
 
 
 }
