@@ -19,4 +19,6 @@ Route::post('users/login', [UserController::class, 'login']);
 Route::post('users/logout', [UserController::class, 'logout'])->middleware('auth:api');
 Route::post('/ciudades/favoritas', [FavoritesController::class, 'agregarFavorito'])->middleware('auth:api');
 Route::get('/ciudades/favoritas', [FavoritesController::class, 'listarFavoritos'])->middleware('auth:api');
+Route::delete('/ciudades/favoritas/{id}', [FavoritesController::class, 'eliminarFavorito'])->middleware('auth:api');
+
 

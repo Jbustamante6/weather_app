@@ -130,5 +130,66 @@ class FavoritesControllerTest extends TestCase
         // Verificar que la respuesta sea de no autenticado
         $response->assertStatus(401);
     }
+
+    /**
+     * Test para verificar que un usuario autenticado puede eliminar un favorito.
+     */
+    public function test_usuario_autenticado_puede_eliminar_favorito()
+    {
+        // Crear un usuario y un favorito
+        $user = User::factory()->create();
+        $favorite = Favorite::factory()->create(['user_id' => $user->id]);
+
+        // Hacer la solicitud autenticada para eliminar el favorito
+        $response = $this->actingAs($user, 'api')
+                         ->deleteJson("/api/ciudades/favoritas/{$favorite->id}");
+
+        // Verificar la respuesta
+        $response->assertStatus(200)
+                 ->assertJson(['message' => 'Favorite deleted successfully']);
+
+        // Verificar que el registro haya sido eliminado de la base de datos
+        $this->assertDatabaseMissing('favorites', ['id' => $favorite->id]);
+    }
+
+    /**
+     * Test para verificar que un usuario no puede eliminar un favorito que no le pertenece.
+     */
+    public function test_usuario_no_puede_eliminar_favorito_que_no_le_pertenece()
+    {
+        // Crear dos usuarios y un favorito para uno de ellos
+        $user1 = User::factory()->create();
+        $user2 = User::factory()->create();
+        $favorite = Favorite::factory()->create(['user_id' => $user1->id]);
+
+        // Hacer la solicitud autenticada como el segundo usuario
+        $response = $this->actingAs($user2, 'api')
+                         ->deleteJson("/api/ciudades/favoritas/{$favorite->id}");
+
+        // Verificar la respuesta
+        $response->assertStatus(404)
+                 ->assertJson(['error' => 'Favorite not found or does not belong to the user']);
+
+        // Verificar que el registro aún existe en la base de datos
+        $this->assertDatabaseHas('favorites', ['id' => $favorite->id]);
+    }
+
+    /**
+     * Test para verificar que un usuario no autenticado no puede eliminar un favorito.
+     */
+    public function test_usuario_no_autenticado_no_puede_eliminar_favorito()
+    {
+        // Crear un favorito
+        $favorite = Favorite::factory()->create();
+
+        // Hacer la solicitud sin autenticación
+        $response = $this->deleteJson("/api/ciudades/favoritas/{$favorite->id}");
+
+        // Verificar la respuesta de no autenticado
+        $response->assertStatus(401);
+
+        // Verificar que el registro aún existe en la base de datos
+        $this->assertDatabaseHas('favorites', ['id' => $favorite->id]);
+    }
 }
 
