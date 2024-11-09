@@ -20,7 +20,6 @@ class SearchCityController extends Controller
         }
     
         
-        
         try {
             $response = Cache::remember("city-".$request['q'], 1800, function () use ($request) {
                 $client = new \GuzzleHttp\Client();
